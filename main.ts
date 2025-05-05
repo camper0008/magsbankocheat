@@ -1,10 +1,9 @@
-import { genBatchPlates } from "./gen.js";
-
-type Plate = [number, number[][]];
+// @ts-types="./gen.d.ts"
+import { genBatchPlates, Plate } from "./gen.js";
 
 function genPlates(count: number): Plate[] {
     const then = Date.now();
-    const value = genBatchPlates(count);
+    const value: Plate[] = genBatchPlates(count);
     const now = Date.now();
     console.log(`created ${count} plates in ${now - then}ms`);
     return value;
@@ -19,7 +18,7 @@ function work(count: number): void {
     const draws = new Set<number>();
     const winners = new Map<number, number>();
     while (true) {
-        const drawn = promptInt("now drawn?");
+        const drawn = promptInt(`[${[...draws.values()]}] now drawn?`);
         draws.add(drawn);
         if (draws.size < 5) {
             continue;
