@@ -2,17 +2,15 @@
 //        a lot of the cruft has been cut out, as it doesn't apply to our cases
 //        i.e. stuff related to backwards compatibility, or unseeded input, or non-string seeds
 
-const width = 256; // width: each RC4 output is 0 <= x < 256
-const chunks = 6; // chunks: at least six RC4 outputs for each double
-const digits = 52; // digits: there are 52 significant digits in a double
+const width = 256; // each RC4 output is 0 <= x < 256
+const chunks = 6; // at least six RC4 outputs for each double
+const digits = 52; // there are 52 significant digits in a double
 
-//
 // The following constants are related to IEEE 754 limits.
-//
-const startdenom = Math.pow(width, chunks),
-    significance = Math.pow(2, digits),
-    overflow = significance * 2,
-    mask = width - 1;
+const startdenom = Math.pow(width, chunks);
+const significance = Math.pow(2, digits);
+const overflow = significance * 2;
+const mask = width - 1; // (tph): 0b1111_1111;
 
 export function randomSeed(seed: string) {
     const key: number[] = [];
@@ -22,7 +20,6 @@ export function randomSeed(seed: string) {
         key,
     );
 
-    // Use the seed to initialize an ARC4 generator.
     const arc4 = new ARC4(key);
 
     // This function returns a random double in [0, 1) that contains
@@ -57,8 +54,6 @@ export function randomSeed(seed: string) {
 // The g(count) method returns a pseudorandom integer that concatenates
 // the next (count) outputs from ARC4.  Its return value is a number x
 // that is in the range 0 <= x < (width ^ count).
-//
-// (tph): not arc4, name collision. narc is a fun word. stikker.
 class ARC4 {
     private i = 0;
     private j = 0;
@@ -109,11 +104,10 @@ class ARC4 {
 
 // Mixes a string seed into a key that is an array of integers, and
 // returns a shortened string seed that is equivalent to the result key.
-// (tph): i don't understand this function enough to say it isn't required, as i know it modifies key
 // (tph): the return value is useless to us. it's "shortseed",
 //        which is what Math.randomseed returns if called as "Math.randomseed"
 //        but MAGS discards the return value
-// (tph): from my testing, it appears to fill key with the seed converted to charcodes
+// (tph): if key length is < 255, it simply fills the array with the charcodes
 //        so it's functionally the same as the following, for our use cases
 
 function mixkey(seed: string, key: number[]): void {
@@ -123,17 +117,24 @@ function mixkey(seed: string, key: number[]): void {
     return;
 
     /*
-    // (tph): possibly a global
-    var smear: number;
+    // (tph): smear is only relevant if keys are > 255 in length
+    let smear: number = 0;
 
-    const stringseed = seed + "";
-    let j = 0;
-    while (j < stringseed.length) {
-        key[mask & j] = mask &
-            ((smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++));
+    let i = 0;
+    while (i < seed.length) {
+        // (tph): `mask & i` is just `i % 256`
+        //        so it only matters for strings with a length > 255
+        //        it is also used to keep `key` as an `u8[]`
+        // (tph): smear is only applied if key[mask & i] isn't zero.
+        //        if key length is < 255, `key[mask & i]` is undefined,
+        //        which is coerced to 0. as smear is also 0, 0 ^ 0 = 0,
+        //        thus smear is always 0 if key length < 255
+        key[mask & i] = mask &
+            ((smear ^= key[mask & i] * 19) + seed.charCodeAt(i++));
     }
 
-    // (tph): used to be called "tostring", inlined
+    // (tph): used to be called "tostring", inlined.
+    //        discarded, but kept for the sake of documenting
     return String.fromCharCode(...key);
     */
 }
