@@ -1,6 +1,6 @@
 // (tph): deobfuscated seedrandom.js
-// a lot of the cruft has been cut out, as it doesn't apply to our cases
-// i.e. stuff related to backwards compatibility, or unseeded input, or non-string seeds
+//        a lot of the cruft has been cut out, as it doesn't apply to our cases
+//        i.e. stuff related to backwards compatibility, or unseeded input, or non-string seeds
 
 const width = 256; // width: each RC4 output is 0 <= x < 256
 const chunks = 6; // chunks: at least six RC4 outputs for each double
@@ -17,7 +17,6 @@ const startdenom = Math.pow(width, chunks),
 export function randomSeed(seed: string) {
     const key: number[] = [];
 
-    // (tph): possibly not necessary? - modifies key, but return value is useless
     mixkey(
         seed,
         key,
@@ -109,11 +108,20 @@ function ARC4(key: number[]) {
 // Mixes a string seed into a key that is an array of integers, and
 // returns a shortened string seed that is equivalent to the result key.
 // (tph): i don't understand this function enough to say it isn't required, as i know it modifies key
-// (tph): but the return value is useless to us. it's "shortseed", which is what Math.randomseed supposedly returns if called as "Math.randomseed"
-// but MAGS discards the return value
-function mixkey(seed: string, key: number[]): string {
+// (tph): the return value is useless to us. it's "shortseed",
+//        which is what Math.randomseed returns if called as "Math.randomseed"
+//        but MAGS discards the return value
+// (tph): from my testing, it appears to fill key with the seed converted to charcodes
+//        so it's functionally the same as the following, for our use cases
+
+function mixkey(seed: string, key: number[]): void {
+    for (let i = 0; i < seed.length; ++i) {
+        key[i] = seed.charCodeAt(i);
+    }
+    return;
+
+    /*
     // (tph): possibly a global
-    // deno-lint-ignore no-var
     var smear: number;
 
     const stringseed = seed + "";
@@ -125,4 +133,5 @@ function mixkey(seed: string, key: number[]): string {
 
     // (tph): used to be called "tostring", inlined
     return String.fromCharCode(...key);
+    */
 }
