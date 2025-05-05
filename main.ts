@@ -32,8 +32,8 @@ function work(count: number): void {
                 winners.set(seed, amount);
             }
         }
-        if (winners.size > 0) {
-            console.log("winners:", ...winners);
+        for (const [seed, rows] of winners) {
+            console.log("seed", seed, "has", rows, "rows");
         }
     }
 }
