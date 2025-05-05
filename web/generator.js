@@ -84,9 +84,16 @@ function plateValues(seed) {
     );
 }
 
-export function bench(n) {
-    return Array.from({ length: n }, (_, i) => i.toString())
-        .map(plateValues);
+export function genBatchPlates(count, offset = 0) {
+    const result = new Array(count);
+    for (let i = 0; i < count; ++i) {
+        if ((i + 1) % (count / 10) === 0) {
+            const amountDone = ((i + 1) / count) * 100;
+            console.log(`${amountDone}%`);
+        }
+        result.push(plateValues(i + offset));
+    }
+    return result;
 }
 
 export function renderPlate(seed) {
