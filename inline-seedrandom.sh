@@ -1,1 +1,1 @@
-cat web/seedrandom.js web/generator.js > gen.js
+cat web/seedrandom.js web/gen.js > gen.js
