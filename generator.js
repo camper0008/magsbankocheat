@@ -2,103 +2,103 @@ function setCellValue(value, cell) {
     cell.textContent = value;
 }
 
-function gen_int(i) {
+function genValue(i) {
+    // in the case of i === 8, we wastefully advance the prng
+    // like in the original algorithm
     let number = Math.floor(Math.random() * 10 + i * 10);
     while (number === 0) {
         number = Math.floor(Math.random() * 10 + i * 10);
     }
     if (i === 8) {
-        number = Math.floor(Math.random() * 11 + 80);
-    }
-    if (i === 100) {
-        number = Math.ceil(Math.random() * 9);
+        return Math.floor(Math.random() * 11 + 80);
     }
     return number;
+}
+
+function genIndex() {
+    // wastefully advance the prng like in the original algorithm
+    const magicRowIdx = 100;
+    let number = Math.floor(Math.random() * 10 + magicRowIdx * 10);
+    while (number === 0) {
+        number = Math.floor(Math.random() * 10 + magicRowIdx * 10);
+    }
+    return Math.floor(Math.random() * 9);
 }
 
 function hasDuplicates(array) {
     return new Set(array).size !== array.length;
 }
 
-function genColumn(i) {
-    let col = Array.from({ length: 3 }, () => gen_int(i));
-    while (hasDuplicates(col) == true) {
-        col = Array.from({ length: 3 }, () => gen_int(i));
+function genColumnSample(i) {
+    let column = Array.from({ length: 3 }, () => genValue(i));
+    while (hasDuplicates(column)) {
+        column = Array.from({ length: 3 }, () => genValue(i));
     }
-    return col.sort();
+    return column.sort();
 }
 
-function genRowIndex() {
-    let row = Array.from({ length: 5 }, () => gen_int(100));
-    while (hasDuplicates(row) == true) {
-        row = Array.from({ length: 5 }, () => gen_int(100));
+function genColumnIndexes() {
+    let indexes = Array.from({ length: 5 }, () => genIndex());
+    while (hasDuplicates(indexes) == true) {
+        indexes = Array.from({ length: 5 }, () => genIndex());
     }
-    return row.sort();
+    return indexes.sort();
 }
 
 function containsAllIndexes(rows) {
     const values = rows.flat();
-    for (let i = 1; i <= 9; i++) {
-        if (values.indexOf(i) === -1) {
+    for (let i = 0; i < 9; i++) {
+        if (!values.includes(i)) {
             return false;
         }
     }
     return true;
 }
 function genRowIndexes() {
-    let rows = [genRowIndex(), genRowIndex(), genRowIndex()];
+    let rows = [genColumnIndexes(), genColumnIndexes(), genColumnIndexes()];
     while (!containsAllIndexes(rows)) {
-        rows = [genRowIndex(), genRowIndex(), genRowIndex()];
+        rows = [genColumnIndexes(), genColumnIndexes(), genColumnIndexes()];
     }
     return rows;
 }
 
 function clearPlate() {
-    for (let row = 1; row <= 3; row++) {
-        for (let column = 1; column <= 9; column++) {
-            const cell = "p1" + String(row) + String(column);
+    for (let row = 0; row < 3; ++row) {
+        for (let column = 0; column < 9; ++column) {
+            const cell = `p${row}${column}`;
             document.getElementById(cell).innerHTML = "";
         }
     }
 }
 
-function updatePlate() {
+function genPlate(seed) {
+    Math.seedrandom(seed);
+    const samples = Array.from(
+        { length: 9 },
+        (_, idx) => genColumnSample(idx),
+    );
+    const indexes = genRowIndexes();
+    return [samples, indexes];
+}
+
+function renderPlate(seed) {
     clearPlate();
-    var dict = {};
-    for (var n = 1; n <= 3; n++) {
-        var cols = [];
-        for (var i = 0; i < 9; i++) {
-            var col = genColumn(i);
-            cols.push(col);
+    const [samples, indexes] = genPlate(seed);
+
+    for (let row = 0; row < 3; row++) {
+        for (const index of indexes[row]) {
+            const cell = `p${row}${index}`;
+            const value = samples[index][row];
+            document.getElementById(cell).textContent = value;
         }
-
-        var rows_choose = genRowIndexes();
-
-        var chosen_row;
-
-        for (var j = 0; j < 3; j++) {
-            for (var i = 0; i < rows_choose[j].length; i++) {
-                var k = rows_choose[j][i];
-                var celle = "p" + String(n) + String(j + 1) + String(k);
-                dict[celle] = cols[k - 1][j];
-            }
-        }
-    }
-
-    for (var key in dict) {
-        var value = dict[key];
-        setCellValue(value, document.getElementById(key));
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("nameInput").addEventListener(
-        "keypress",
-        function (e) {
-            if (e.key === "Enter") {
-                Math.seedrandom(this.value);
-                updatePlate();
-            }
-        },
-    );
-});
+document.getElementById("nameInput").addEventListener(
+    "keypress",
+    function (e) {
+        if (e.key === "Enter") {
+            renderPlate(this.value);
+        }
+    },
+);
