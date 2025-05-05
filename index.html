@@ -3,32 +3,25 @@
     <script src="seedrandom.js" charset="utf-8"></script>
     <script src="generator.js" charset="utf-8"></script>
     <head>
-        <link rel="stylesheet" href="stylesheet.css">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Banko med MAGS</title>
     </head>
     <body>
         <h1>Banko med MAGS</h1>
-        <div id="knapper">
+        <div>
             <input
-                name="tekstboks"
-                id="tekstboks"
+                id="nameInput"
                 size="40"
-                placeholder="skriv dit navn her"
+                placeholder="Skriv dit navn her"
             >
-            <button
-                id="knap"
-                type="button"
-                name="button"
-                onclick="Math.seedrandom(tekstboks.value),update_plates()"
-            >
+            <button onclick="Math.seedrandom(nameInput.value),updatePlate()">
                 Generer plader
             </button>
         </div>
         <h2>Banko</h2>
-        <table id="p1">
-            <tr id="p11">
+        <table>
+            <tr>
                 <td id="p111"></td>
                 <td id="p112"></td>
                 <td id="p113"></td>
@@ -39,7 +32,7 @@
                 <td id="p118"></td>
                 <td id="p119"></td>
             </tr>
-            <tr id="p12">
+            <tr>
                 <td id="p121"></td>
                 <td id="p122"></td>
                 <td id="p123"></td>
@@ -50,7 +43,7 @@
                 <td id="p128"></td>
                 <td id="p129"></td>
             </tr>
-            <tr id="p13">
+            <tr>
                 <td id="p131"></td>
                 <td id="p132"></td>
                 <td id="p133"></td>

@@ -1,14 +1,4 @@
-function myFunction(elmnt) {
-    console.log(elmnt.style.backgroundColor);
-    if (elmnt.style.backgroundColor == "white") {
-        elmnt.style.backgroundColor = "hsl(120, 100%, 75%)";
-    } else {
-        elmnt.style.backgroundColor = "white";
-    }
-}
-var værdi;
-var celle;
-function nyfunktion(værdi, celle) {
+function setCellValue(værdi, celle) {
     celle.innerHTML = værdi;
 }
 
@@ -67,7 +57,7 @@ function generate_rows_check() {
     }
     return rows;
 }
-function update_plates() {
+function updatePlate() {
     for (var x2 = 1; x2 <= 3; x2++) {
         for (var x3 = 1; x3 <= 9; x3++) {
             var celle = "p1" + String(x2) + String(x3);
@@ -97,76 +87,17 @@ function update_plates() {
 
     for (var key in dict) {
         var value = dict[key];
-        nyfunktion(value, document.getElementById(key));
+        setCellValue(value, document.getElementById(key));
     }
 }
 
-function generateRandomName() {
-    // Nulstil til ægte tilfældighed for navnevalg
-    Math.seedrandom();
-
-    // Liste af tilfældige navne
-    const fornavne = [
-        "William",
-        "Karl",
-        "Emil",
-        "Oscar",
-        "Malthe",
-        "Noah",
-        "Valdemar",
-        "Aksel",
-        "August",
-        "Oliver",
-        "Lucas",
-        "Alfred",
-        "Theo",
-        "Elias",
-        "Arthur",
-        "Otto",
-        "Elliot",
-        "Felix",
-        "Victor",
-        "Magnus",
-        "Ella",
-        "Freja",
-        "Alma",
-        "Frida",
-        "Agnes",
-        "Luna",
-        "Ida",
-        "Nora",
-        "Olivia",
-        "Sofia",
-        "Emma",
-        "Clara",
-        "Asta",
-        "Alberte",
-        "Karla",
-        "Lily",
-        "Ellie",
-        "Anna",
-        "Ellen",
-        "Esther",
-    ];
-
-    // Vælg tilfældigt fornavn
-    const fornavn = fornavne[Math.floor(Math.random() * fornavne.length)];
-
-    // Sæt navnet i tekstboksen
-    document.getElementById("tekstboks").value = fornavn;
-
-    // Sæt ny seed til pladegenerering
-    Math.seedrandom(fornavn);
-    update_plates();
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("tekstboks").addEventListener(
+    document.getElementById("nameInput").addEventListener(
         "keypress",
         function (e) {
             if (e.key === "Enter") {
                 Math.seedrandom(this.value);
-                update_plates();
+                updatePlate();
             }
         },
     );
