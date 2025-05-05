@@ -1,5 +1,5 @@
-function setCellValue(værdi, celle) {
-    celle.innerHTML = værdi;
+function setCellValue(value, cell) {
+    cell.textContent = value;
 }
 
 function gen_int(i) {
@@ -52,13 +52,18 @@ function genRowIndexes() {
     }
     return rows;
 }
-function updatePlate() {
-    for (var x2 = 1; x2 <= 3; x2++) {
-        for (var x3 = 1; x3 <= 9; x3++) {
-            var celle = "p1" + String(x2) + String(x3);
-            document.getElementById(celle).innerHTML = "";
+
+function clearPlate() {
+    for (let row = 1; row <= 3; row++) {
+        for (let column = 1; column <= 9; column++) {
+            const cell = "p1" + String(row) + String(column);
+            document.getElementById(cell).innerHTML = "";
         }
     }
+}
+
+function updatePlate() {
+    clearPlate();
     var dict = {};
     for (var n = 1; n <= 3; n++) {
         var cols = [];
