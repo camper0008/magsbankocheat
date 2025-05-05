@@ -18,7 +18,8 @@ function work(count: number): void {
     const draws = new Set<number>();
     const winners = new Map<number, number>();
     while (true) {
-        const drawn = promptInt(`[${[...draws.values()]}] now drawn?`);
+        console.log("currently drawn:", ...draws.values());
+        const drawn = promptInt("newest draw?");
         draws.add(drawn);
         if (draws.size < 5) {
             continue;
@@ -27,12 +28,10 @@ function work(count: number): void {
             const amount = plate.filter(
                 (row) => row.every((value) => draws.has(value)),
             ).length;
-            if (amount > 0) {
+            if (amount > 0 && winners.get(seed) !== amount) {
                 winners.set(seed, amount);
+                console.log("seed", seed, "has", amount, "rows");
             }
-        }
-        for (const [seed, rows] of winners) {
-            console.log("seed", seed, "has", rows, "rows");
         }
     }
 }
