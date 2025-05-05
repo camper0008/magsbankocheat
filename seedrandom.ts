@@ -49,7 +49,6 @@ export function randomSeed(seed: string) {
     Math["random"] = prng;
 }
 
-//
 // ARC4
 //
 // An ARC4 implementation.  The constructor takes a key in the form of
@@ -59,50 +58,53 @@ export function randomSeed(seed: string) {
 // the next (count) outputs from ARC4.  Its return value is a number x
 // that is in the range 0 <= x < (width ^ count).
 //
-/** @constructor */
-// @deno-lint-ignore
-function ARC4(key: number[]) {
-    var t,
-        keylen = key.length,
-        me = this,
-        i = 0,
-        j = (me.i = me.j = 0),
-        s = (me.S = []);
+// (tph): not arc4, name collision. narc is a fun word. stikker.
+class ARC4 {
+    private i = 0;
+    private j = 0;
+    private S: number[] = [];
 
-    // The empty key [] is treated as [0].
-    if (!keylen) {
-        key = [keylen++];
+    constructor(key: number[]) {
+        let t;
+        let i = 0;
+        let j = 0;
+        let keylen = key.length;
+        // The empty key [] is treated as [0].
+        if (!keylen) {
+            key = [keylen++];
+        }
+
+        while (i < width) {
+            this.S[i] = i++;
+        }
+        for (i = 0; i < width; ++i) {
+            this.S[i] =
+                this.S[j = mask & (j + key[i % keylen] + (t = this.S[i]))];
+            this.S[j] = t;
+        }
+
+        // For robust unpredictability, the function call below automatically
+        // discards an initial batch of values.  This is called RC4-drop[256].
+        // See http://google.com/search?q=rsa+fluhrer+response&btnI
+        this.g(width);
     }
 
-    // Set up S using the standard key scheduling algorithm.
-    while (i < width) {
-        s[i] = i++;
-    }
-    for (i = 0; i < width; i++) {
-        s[i] = s[j = mask & (j + key[i % keylen] + (t = s[i]))];
-        s[j] = t;
-    }
-
-    // The "g" method returns the next (count) outputs as one number.
-    (me.g = function (count) {
+    public g(count: number) {
         // Using instance members instead of closure state nearly doubles speed.
-        var t,
+        const s = this.S;
+        let t,
             r = 0,
-            i = me.i,
-            j = me.j,
-            s = me.S;
+            i = this.i,
+            j = this.j;
         while (count--) {
             t = s[i = mask & (i + 1)];
             r = r * width +
                 s[mask & ((s[i] = s[j = mask & (j + t)]) + (s[j] = t))];
         }
-        me.i = i;
-        me.j = j;
+        this.i = i;
+        this.j = j;
         return r;
-        // For robust unpredictability, the function call below automatically
-        // discards an initial batch of values.  This is called RC4-drop[256].
-        // See http://google.com/search?q=rsa+fluhrer+response&btnI
-    })(width);
+    }
 }
 
 // Mixes a string seed into a key that is an array of integers, and
