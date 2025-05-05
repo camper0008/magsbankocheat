@@ -1,7 +1,3 @@
-function setCellValue(value, cell) {
-    cell.textContent = value;
-}
-
 function genValue(i) {
     // in the case of i === 8, we wastefully advance the prng
     // like in the original algorithm
@@ -81,11 +77,23 @@ function genPlate(seed) {
     return [samples, indexes];
 }
 
-function renderPlate(seed) {
+function plateValues(seed) {
+    const [samples, indexes] = genPlate(seed);
+    return indexes.map((indexes, row) =>
+        indexes.map((index) => samples[index][row])
+    );
+}
+
+export function bench(n) {
+    return Array.from({ length: n }, (_, i) => i.toString())
+        .map(plateValues);
+}
+
+export function renderPlate(seed) {
     clearPlate();
     const [samples, indexes] = genPlate(seed);
 
-    for (let row = 0; row < 3; row++) {
+    for (const row in indexes) {
         for (const index of indexes[row]) {
             const cell = `p${row}${index}`;
             const value = samples[index][row];
@@ -93,12 +101,3 @@ function renderPlate(seed) {
         }
     }
 }
-
-document.getElementById("nameInput").addEventListener(
-    "keypress",
-    function (e) {
-        if (e.key === "Enter") {
-            renderPlate(this.value);
-        }
-    },
-);
