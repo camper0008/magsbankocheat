@@ -3,15 +3,15 @@ function setCellValue(værdi, celle) {
 }
 
 function gen_int(i) {
-    var number = Math.floor(Math.random() * 10 + i * 10);
+    let number = Math.floor(Math.random() * 10 + i * 10);
     while (number === 0) {
-        var number = Math.floor(Math.random() * 10 + i * 10);
+        number = Math.floor(Math.random() * 10 + i * 10);
     }
     if (i === 8) {
-        var number = Math.floor(Math.random() * 11 + 80);
+        number = Math.floor(Math.random() * 11 + 80);
     }
     if (i === 100) {
-        var number = Math.ceil(Math.random() * 9);
+        number = Math.ceil(Math.random() * 9);
     }
     return number;
 }
@@ -20,40 +20,35 @@ function hasDuplicates(array) {
     return new Set(array).size !== array.length;
 }
 
-function generate_col(i) {
-    var col = Array.from({ length: 3 }, () => gen_int(i));
+function genColumn(i) {
+    let col = Array.from({ length: 3 }, () => gen_int(i));
     while (hasDuplicates(col) == true) {
-        var col = Array.from({ length: 3 }, () => gen_int(i));
+        col = Array.from({ length: 3 }, () => gen_int(i));
     }
     return col.sort();
 }
 
-function generate_row() {
-    var row = Array.from({ length: 5 }, () => gen_int(100));
+function genRowIndex() {
+    let row = Array.from({ length: 5 }, () => gen_int(100));
     while (hasDuplicates(row) == true) {
-        var row = Array.from({ length: 5 }, () => gen_int(100));
+        row = Array.from({ length: 5 }, () => gen_int(100));
     }
     return row.sort();
 }
 
-function contains_digits(rows) {
-    var concat = rows[0].concat(rows[1], rows[2]);
-    for (var i = 1; i < 9; i++) {
-        if (concat.indexOf(i) === -1) {
+function containsAllIndexes(rows) {
+    const values = rows.flat();
+    for (let i = 1; i <= 9; i++) {
+        if (values.indexOf(i) === -1) {
             return false;
         }
     }
-
-    if (concat.indexOf(9) === -1) {
-        return false;
-    }
     return true;
 }
-function generate_rows_check() {
-    console.log(rows);
-    var rows = new Array(generate_row(), generate_row(), generate_row());
-    while (!contains_digits(rows)) {
-        var rows = new Array(generate_row(), generate_row(), generate_row());
+function genRowIndexes() {
+    let rows = [genRowIndex(), genRowIndex(), genRowIndex()];
+    while (!containsAllIndexes(rows)) {
+        rows = [genRowIndex(), genRowIndex(), genRowIndex()];
     }
     return rows;
 }
@@ -68,11 +63,11 @@ function updatePlate() {
     for (var n = 1; n <= 3; n++) {
         var cols = [];
         for (var i = 0; i < 9; i++) {
-            var col = generate_col(i);
+            var col = genColumn(i);
             cols.push(col);
         }
 
-        var rows_choose = generate_rows_check();
+        var rows_choose = genRowIndexes();
 
         var chosen_row;
 
