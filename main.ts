@@ -1,9 +1,8 @@
-// @ts-types="./gen.d.ts"
-import { genBatchPlates, Plate } from "./gen.js";
+import { genBatchPlates, Plate } from "./gen.ts";
 
-function genPlates(count: number): Plate[] {
+function genPlates(count: number): [number, Plate][] {
     const then = Date.now();
-    const value: Plate[] = genBatchPlates(count);
+    const value: [number, Plate][] = genBatchPlates(count);
     const now = Date.now();
     console.log(`created ${count} plates in ${now - then}ms`);
     return value;
