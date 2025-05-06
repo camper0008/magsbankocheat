@@ -35,7 +35,7 @@ function genColumnSample(i) {
 
 function genColumnIndexes() {
     let indexes = Array.from({ length: 5 }, () => genIndex());
-    while (hasDuplicates(indexes) == true) {
+    while (hasDuplicates(indexes)) {
         indexes = Array.from({ length: 5 }, () => genIndex());
     }
     return indexes.sort();
@@ -51,9 +51,9 @@ function containsAllIndexes(rows) {
     return true;
 }
 function genRowIndexes() {
-    let rows = [genColumnIndexes(), genColumnIndexes(), genColumnIndexes()];
+    let rows = Array.from({ length: 3 }, () => genColumnIndexes());
     while (!containsAllIndexes(rows)) {
-        rows = [genColumnIndexes(), genColumnIndexes(), genColumnIndexes()];
+        rows = Array.from({ length: 3 }, () => genColumnIndexes());
     }
     return rows;
 }

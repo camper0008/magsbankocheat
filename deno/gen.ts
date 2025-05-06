@@ -39,7 +39,7 @@ function genColumnSample(i: number) {
 
 function genColumnIndexes() {
     let indexes = Array.from({ length: 5 }, () => genIndex());
-    while (hasDuplicates(indexes) == true) {
+    while (hasDuplicates(indexes)) {
         indexes = Array.from({ length: 5 }, () => genIndex());
     }
     return indexes.sort();
