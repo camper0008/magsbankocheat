@@ -55,9 +55,9 @@ function containsAllIndexes(rows: number[][]) {
     return true;
 }
 function genRowIndexes() {
-    let rows = [genColumnIndexes(), genColumnIndexes(), genColumnIndexes()];
+    let rows = Array.from({ length: 3 }, () => genColumnIndexes());
     while (!containsAllIndexes(rows)) {
-        rows = [genColumnIndexes(), genColumnIndexes(), genColumnIndexes()];
+        rows = Array.from({ length: 3 }, () => genColumnIndexes());
     }
     return rows;
 }
