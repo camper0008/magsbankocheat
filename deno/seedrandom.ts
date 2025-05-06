@@ -92,7 +92,8 @@ class ARC4 {
         let i = this.i;
         let j = this.j;
         while (count > 0) {
-            t = s[i = mask & (i + 1)];
+            i = mask & (i + 1);
+            t = s[i];
             j = mask & (j + t);
             s[i] = s[j];
             s[j] = t;
