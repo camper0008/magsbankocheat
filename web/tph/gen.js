@@ -58,7 +58,7 @@ function genRowIndexes() {
     return rows;
 }
 
-function clearPlate() {
+function clearBoard() {
     for (let row = 0; row < 3; ++row) {
         for (let column = 0; column < 9; ++column) {
             const cell = `p${row}${column}`;
@@ -67,7 +67,7 @@ function clearPlate() {
     }
 }
 
-function genPlate(seed) {
+function genBoard(seed) {
     randomSeed(seed.toString());
     const samples = Array.from(
         { length: 9 },
@@ -77,28 +77,28 @@ function genPlate(seed) {
     return [samples, indexes];
 }
 
-function plateValues(seed) {
-    const [samples, indexes] = genPlate(seed);
+function boardValues(seed) {
+    const [samples, indexes] = genBoard(seed);
     return indexes.map((indexes, row) =>
         indexes.map((index) => samples[index][row])
     );
 }
 
-function genBatchPlates(count, offset = 0) {
+function genBatchBoards(count, offset = 0) {
     const result = [];
     for (let i = 0; i < count; ++i) {
         if ((i + 1) % (count / 10) === 0) {
             const amountDone = ((i + 1) / count) * 100;
             console.log(`${amountDone}%`);
         }
-        result.push([i + offset, plateValues(i + offset)]);
+        result.push([i + offset, boardValues(i + offset)]);
     }
     return result;
 }
 
-function renderPlate(seed) {
-    clearPlate();
-    const [samples, indexes] = genPlate(seed);
+function renderBoard(seed) {
+    clearBoard();
+    const [samples, indexes] = genBoard(seed);
 
     for (const row in indexes) {
         for (const index of indexes[row]) {

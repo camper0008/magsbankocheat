@@ -64,7 +64,7 @@ fn contains_all_indexes(rows: [[usize; 5]; 3]) -> bool {
     true
 }
 
-fn plate<S: AsRef<str>>(seed: S) -> [[usize; 5]; 3] {
+fn board<S: AsRef<str>>(seed: S) -> [[usize; 5]; 3] {
     let mut rng = seed::Rng::new(seed.as_ref().bytes().collect());
     let samples: Vec<_> = (0..9).map(|i| gen_column_sample(&mut rng, i)).collect();
     let indexes = gen_row_indexes(&mut rng);
@@ -78,6 +78,6 @@ fn plate<S: AsRef<str>>(seed: S) -> [[usize; 5]; 3] {
 }
 
 fn main() {
-    let plate = plate("yay");
-    dbg!(plate);
+    let board = board("yay");
+    dbg!(board);
 }

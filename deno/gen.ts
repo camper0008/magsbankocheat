@@ -1,6 +1,6 @@
 import { randomSeed } from "./seedrandom.ts";
 
-export type Plate = number[][];
+export type Board = number[][];
 
 function genValue(i: number) {
     // in the case of i === 8, we wastefully advance the prng
@@ -62,7 +62,7 @@ function genRowIndexes() {
     return rows;
 }
 
-function genPlate(seed: string) {
+function genBoard(seed: string) {
     randomSeed(seed);
     const samples = Array.from(
         { length: 9 },
@@ -72,22 +72,22 @@ function genPlate(seed: string) {
     return [samples, indexes];
 }
 
-function plateValues(seed: string) {
-    const [samples, indexes] = genPlate(seed);
+function boardValues(seed: string) {
+    const [samples, indexes] = genBoard(seed);
     return indexes.map((indexes, row) =>
         indexes.map((index) => samples[index][row])
     );
 }
 
-export function genBatchPlates(count: number, offset = 0): [number, Plate][] {
-    const result: [number, Plate][] = [];
+export function genBatchBoards(count: number, offset = 0): [number, Board][] {
+    const result: [number, Board][] = [];
     for (let i = 0; i < count; ++i) {
         if ((i + 1) % (count / 10) === 0) {
             const amountDone = ((i + 1) / count) * 100;
             console.log(`${amountDone}%`);
         }
         const value = i + offset;
-        result.push([value, plateValues(value.toString())]);
+        result.push([value, boardValues(value.toString())]);
     }
     return result;
 }
