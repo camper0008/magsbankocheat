@@ -1,5 +1,6 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, time::Instant};
 
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use seed::Rng;
 
 mod seed;
@@ -78,6 +79,13 @@ fn board<S: AsRef<str>>(seed: S) -> [[usize; 5]; 3] {
 }
 
 fn main() {
-    let board = board("yay");
-    dbg!(board);
+    let boards = 1_000_000;
+    let then = Instant::now();
+    let boards: Vec<_> = (0..boards)
+        .into_par_iter()
+        .map(|i| i.to_string())
+        .map(board)
+        .collect();
+    let took = Instant::now() - then;
+    println!("created {} boards in {}ms", boards.len(), took.as_millis());
 }
