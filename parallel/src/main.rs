@@ -9,6 +9,7 @@ fn gen_column_sample(rng: &mut Rng, idx: usize) -> [usize; 3] {
     while has_duplicates(indexes) {
         indexes = std::array::from_fn(|_| gen_value(rng, idx));
     }
+    indexes.sort();
     indexes
 }
 
@@ -41,6 +42,7 @@ fn gen_column_indexes(rng: &mut Rng) -> [usize; 5] {
     while has_duplicates(indexes) {
         indexes = std::array::from_fn(|_| gen_index(rng));
     }
+    indexes.sort();
     indexes
 }
 

@@ -44,9 +44,9 @@ impl Arc4 {
         v.g(WIDTH);
         v
     }
-    fn g(&mut self, count: usize) -> usize {
+    fn g(&mut self, count: usize) -> f64 {
         let mut t;
-        let mut r: usize = 0;
+        let mut r: f64 = 0.0;
         for _ in (0..count).rev() {
             self.i = MASK & (self.i + 1);
             t = self.s[self.i];
@@ -54,8 +54,7 @@ impl Arc4 {
             self.s[self.i] = self.s[self.j];
             self.s[self.j] = t;
             let temp = MASK & (self.s[self.i] + self.s[self.j]);
-            dbg!(r);
-            r = r.saturating_mul(WIDTH).saturating_add(self.s[temp]);
+            r = r * WIDTH as f64 + self.s[temp] as f64;
         }
         r
     }
@@ -68,17 +67,17 @@ impl Rng {
         }
     }
     pub fn next(&mut self) -> f64 {
-        let mut n = self.arc.g(CHUNKS);
-        let mut d = START_DENOM;
+        let mut n = self.arc.g(CHUNKS) as usize;
+        let mut d = START_DENOM as f64;
         let mut x = 0;
         while n < SIGNIFICANCE {
             n = (n + x) * WIDTH;
-            d *= WIDTH;
-            x = self.arc.g(1);
+            d *= WIDTH as f64;
+            x = self.arc.g(1) as usize;
         }
         while n >= OVERFLOW {
             n /= 2;
-            d /= 2;
+            d /= 2.0;
             x >>= 1;
         }
         (n + x) as f64 / d as f64
