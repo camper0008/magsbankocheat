@@ -62,9 +62,9 @@ impl Arc4 {
 }
 
 impl Rng {
-    pub fn new(seed: String) -> Self {
+    pub fn new(seed: Vec<u8>) -> Self {
         Self {
-            arc: Arc4::new(seed.bytes().collect()),
+            arc: Arc4::new(seed),
         }
     }
     pub fn next(&mut self) -> f64 {
