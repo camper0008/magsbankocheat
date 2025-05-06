@@ -6,12 +6,12 @@ use seed::Rng;
 mod seed;
 
 fn gen_column_sample(rng: &mut Rng, idx: usize) -> [usize; 3] {
-    let mut indexes = std::array::from_fn(|_| gen_value(rng, idx));
-    while has_duplicates(indexes) {
-        indexes = std::array::from_fn(|_| gen_value(rng, idx));
+    let mut sample = std::array::from_fn(|_| gen_value(rng, idx));
+    while has_duplicates(sample) {
+        sample = std::array::from_fn(|_| gen_value(rng, idx));
     }
-    indexes.sort();
-    indexes
+    sample.sort();
+    sample
 }
 
 fn has_duplicates<const N: usize>(array: [usize; N]) -> bool {
@@ -79,7 +79,7 @@ fn board<S: AsRef<str>>(seed: S) -> [[usize; 5]; 3] {
 }
 
 fn main() {
-    let boards = 1_000_000;
+    let boards = 100_000;
     let then = Instant::now();
     let boards: Vec<_> = (0..boards)
         .into_par_iter()
