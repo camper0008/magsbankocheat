@@ -46,7 +46,7 @@ impl Arc4 {
     }
     fn g(&mut self, count: usize) -> usize {
         let mut t;
-        let mut r = 0;
+        let mut r: usize = 0;
         for _ in (0..count).rev() {
             self.i = MASK & (self.i + 1);
             t = self.s[self.i];
@@ -55,7 +55,7 @@ impl Arc4 {
             self.s[self.j] = t;
             let temp = MASK & (self.s[self.i] + self.s[self.j]);
             dbg!(r);
-            r = r * WIDTH + self.s[temp];
+            r = r.saturating_mul(WIDTH).saturating_add(self.s[temp]);
         }
         r
     }
