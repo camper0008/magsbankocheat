@@ -61,7 +61,6 @@ class ARC4 {
 
     constructor(key) {
         let t;
-        let i = 0;
         let j = 0;
         let keylen = key.length;
         // The empty key [] is treated as [0].
@@ -69,12 +68,13 @@ class ARC4 {
             key = [keylen++];
         }
 
-        while (i < width) {
-            this.S[i] = i++;
+        for (let i = 0; i < width; ++i) {
+            this.S[i] = i;
         }
-        for (i = 0; i < width; ++i) {
-            this.S[i] =
-                this.S[j = mask & (j + key[i % keylen] + (t = this.S[i]))];
+        for (let i = 0; i < width; ++i) {
+            t = this.S[i];
+            j = (j + key[i % keylen] + t) & mask;
+            this.S[i] = this.S[j];
             this.S[j] = t;
         }
 
@@ -87,14 +87,18 @@ class ARC4 {
     g(count) {
         // Using instance members instead of closure state nearly doubles speed.
         const s = this.S;
-        let t,
-            r = 0,
-            i = this.i,
-            j = this.j;
-        while (count--) {
+        let t;
+        let r = 0;
+        let i = this.i;
+        let j = this.j;
+        while (count > 0) {
             t = s[i = mask & (i + 1)];
-            r = r * width +
-                s[mask & ((s[i] = s[j = mask & (j + t)]) + (s[j] = t))];
+            j = mask & (j + t);
+            s[i] = s[j];
+            s[j] = t;
+            const temp = mask & (s[i] + s[j]);
+            r = r * width + s[temp];
+            --count;
         }
         this.i = i;
         this.j = j;
